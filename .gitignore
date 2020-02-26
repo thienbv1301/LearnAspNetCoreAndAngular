@@ -1,0 +1,13 @@
+*.json
+*.suo
+*.lock
+*.cache
+WebAPI/Web.Data/obj/
+WebAPI/Web.Repository/obj/
+WebAPI/.vs/
+WebAPI/Web.Data/bin/
+WebAPI/Web.Repository/bin/
+WebAPI/Web.Service/bin/
+WebAPI/Web.Service/obj/
+WebAPI/WebAPI/bin/
+WebAPI/WebAPI/obj/

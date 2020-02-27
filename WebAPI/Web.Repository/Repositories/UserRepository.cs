@@ -10,9 +10,15 @@ namespace Web.Repository.Repositories
         {
 
         }
+
+        public User GetUserByAccount(string accName)
+        {
+            return _context.Users.FirstOrDefault(u => u.Account.Trim().ToUpper() == accName.Trim().ToUpper());
+        }
+
         public User GetUserByName(string name)
         {
-            return _context.Users.Include(a=>a.Account).Include(r=>r.Role).FirstOrDefault(u => u.Name == name);
+            return _context.Users.Include(r=>r.Role).FirstOrDefault(u => u.Name == name);
         }
     }
 }

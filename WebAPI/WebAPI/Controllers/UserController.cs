@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Web.LoggerService;
+using Web.Service.DtoModels;
 using Web.Service.UserServices;
 
 namespace WebAPI.Controllers
@@ -16,7 +18,7 @@ namespace WebAPI.Controllers
             _logger = logger;
         }
 
-        [HttpGet]
+        [HttpGet("GetByName")]
         public IActionResult GetUserByName([FromQuery] string name)
         {                   
             if (string.IsNullOrEmpty(name) || string.IsNullOrWhiteSpace(name))
@@ -25,6 +27,17 @@ namespace WebAPI.Controllers
             }
             _logger.LogInfo($"Get user with name '{name}' from the storage ");
             return Ok(_userService.GetUserByName(name));
+        }
+        [AllowAnonymous]
+        [HttpPost("register")]
+        public IActionResult Register([FromBody]UserRegisterModel user)
+        {
+            if (_userService.AccountIsExist(user.Account))
+            {
+                return BadRequest("Account is exist");
+            }
+            _userService.Register(user);
+            return Ok();         
         }
     }
 }

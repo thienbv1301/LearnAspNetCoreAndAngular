@@ -1,7 +1,5 @@
-using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -9,11 +7,6 @@ using Microsoft.OpenApi.Models;
 using NLog;
 using System;
 using System.IO;
-using Web.Data.EntityModels;
-using Web.LoggerService;
-using Web.Repository.UnitOfWork;
-using Web.Service.AutoMapper;
-using Web.Service.UserServices;
 using WebAPI.Extentions;
 
 namespace WebAPI
@@ -31,11 +24,12 @@ namespace WebAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<WebDataContext>(opts => opts.UseSqlServer(Configuration["ConnectionString:WebDB"]));
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
-            services.AddScoped<IUserService, UserService>();
-            services.AddSingleton<ILoggerManager, LoggerManager>();
-            services.AddAutoMapper(typeof(AutoMapperProfile).Assembly);
+            services.ConfigureDBContext(Configuration);
+            services.RegisterBusinessService();
+            services.RegisterUnitOfWork();
+            services.RegisterLoggerService();
+            services.ConfigureAutoMapper();
+            services.ConfigureJWT(Configuration);           
             services.AddControllers();       
             services.AddSwaggerGen(c =>
             {
@@ -54,7 +48,7 @@ namespace WebAPI
             app.UseHttpsRedirection();
 
             app.UseRouting();
-
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

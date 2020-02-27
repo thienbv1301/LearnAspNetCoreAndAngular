@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading.Tasks;
 using Web.Data.EntityModels;
 using Web.Repository.Repositories;
 
@@ -14,12 +13,9 @@ namespace Web.Repository.UnitOfWork
         {
             _context = context;
             UserRepository = new UserRepository(_context);
-            AccountRepository = new GenericRepository<Account>(_context);
             RoleRepository = new GenericRepository<Role>(_context);
         }
         public IUserRepository UserRepository { get; private set; }
-
-        public IGenericRepository<Account> AccountRepository { get; private set; }
 
         public IGenericRepository<Role> RoleRepository { get; private set; }
         protected virtual void Dispose(bool disposing)
@@ -41,9 +37,9 @@ namespace Web.Repository.UnitOfWork
             GC.SuppressFinalize(this);
         }
 
-        public async Task SaveAsync()
+        public void Save()
         {
-           await _context.SaveChangesAsync();
+            _context.SaveChanges();
         }
     }
 }

@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using System;
-using System.Linq;
 using Web.Common.ExceptionModels;
 using Web.Data.EntityModels;
 using Web.Repository.UnitOfWork;
@@ -29,6 +28,44 @@ namespace Web.Service.UserServices
                 throw new NotFoundException($"User {name} does not exist.");             
             }
             return _mapper.Map<UserDto>(user);
+        }
+
+        public void Register(UserRegisterModel newUserInfo)
+        {
+            User newUser = new User();
+            CreatePasswordHash(newUserInfo.Password, out byte[] passwordHash, out byte[] passwordSalt);
+            newUser.Account = newUserInfo.Account;
+            newUser.PasswordHash = passwordHash;
+            newUser.PasswordSalt = passwordSalt;
+            newUser.Name = newUserInfo.Name;
+            newUser.RoleId = 1;          
+            try
+            {
+                _unitOfWork.UserRepository.Add(newUser);
+                _unitOfWork.Save();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }         
+        }
+        private static void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
+        {         
+            using (var hmac = new System.Security.Cryptography.HMACSHA512())
+            {
+                passwordSalt = hmac.Key;
+                passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
+            }
+        }
+
+        public bool AccountIsExist(string accName)
+        {
+            User user = _unitOfWork.UserRepository.GetUserByAccount(accName);
+            if(user== null)
+            {
+                return false;
+            }
+            return true;
         }
     }
 }

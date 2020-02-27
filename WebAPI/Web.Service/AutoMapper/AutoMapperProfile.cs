@@ -8,8 +8,7 @@ namespace Web.Service.AutoMapper
     {
         public AutoMapperProfile()
         {
-            CreateMap<User, UserDto>()
-                .ForMember(d=>d.Account,m=>m.MapFrom(s =>s.Account.Name))
+            CreateMap<User, UserDto>()    
                 .ForMember(d=>d.Role,m=>m.MapFrom(s=>s.Role.Name));
         }
     }

@@ -10,7 +10,6 @@ namespace Web.Data.EntityModels
         }
 
         public DbSet<User> Users { get; set; }
-        public DbSet<Account> Accounts { get; set; }
         public DbSet<Role> Roles { get; set; }
     }
 }

@@ -18,8 +18,14 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Web.Data\Web.Data.csproj" />
+    <ProjectReference Include="..\Web.LoggerService\Web.LoggerService.csproj" />
     <ProjectReference Include="..\Web.Repository\Web.Repository.csproj" />
     <ProjectReference Include="..\Web.Service\Web.Service.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="internal_logs\" />
+    <Folder Include="logs\" />
   </ItemGroup>
 
 

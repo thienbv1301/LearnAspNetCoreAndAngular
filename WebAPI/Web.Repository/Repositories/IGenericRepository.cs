@@ -7,9 +7,7 @@ namespace Web.Repository.Repositories
 {
     public interface IGenericRepository<TEntity> where TEntity : class
     {
-        IQueryable<TEntity> Find(Expression<Func<TEntity, bool>> filter = null,
-            Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
-            string includeProperties = "");
+        IQueryable<TEntity> Find(Expression<Func<TEntity, bool>> expression);
         Task<TEntity> FindByIdAsync(object id);
         void Add(TEntity entity);
         void Delete(object id);

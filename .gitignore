@@ -11,3 +11,9 @@ WebAPI/Web.Service/bin/
 WebAPI/Web.Service/obj/
 WebAPI/WebAPI/bin/
 WebAPI/WebAPI/obj/
+WebAPI/Web.Common/bin/
+WebAPI/Web.Common/obj/
+WebAPI/Web.LoggerService/bin/
+WebAPI/Web.LoggerService/obj/
+WebAPI/WebAPI/logs/
+WebAPI/WebAPI/internal_logs/

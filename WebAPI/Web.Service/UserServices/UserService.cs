@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using System;
+using System.Linq;
+using Web.Common.ExceptionModels;
 using Web.Data.EntityModels;
 using Web.Repository.UnitOfWork;
 using Web.Service.DtoModels;
@@ -21,9 +23,10 @@ namespace Web.Service.UserServices
         public UserDto GetUserByName(string name)
         {
             User user = _unitOfWork.UserRepository.GetUserByName(name);
+            //IQueryable<User> users = _unitOfWork.UserRepository.Find(s => s.Name == name);
             if(user == null)
             {
-                throw new NullReferenceException();             
+                throw new NotFoundException($"User {name} does not exist.");             
             }
             return _mapper.Map<UserDto>(user);
         }

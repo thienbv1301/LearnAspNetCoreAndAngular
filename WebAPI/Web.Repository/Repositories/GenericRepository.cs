@@ -19,23 +19,9 @@ namespace Web.Repository.Repositories
             _dbSet = context.Set<TEntity>();
         }
 
-        public virtual IQueryable<TEntity> Find(Expression<Func<TEntity, bool>> filter = null,
-            Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null, string includeProperties = "")
+        public virtual IQueryable<TEntity> Find(Expression<Func<TEntity, bool>> expression)
         {
-            IQueryable<TEntity> query = _dbSet;
-
-            if (filter != null)
-            {
-                query = query.Where(filter);
-            }
-
-            foreach (var includeProperty in includeProperties.Split
-                (new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
-            {
-                query = query.Include(includeProperty);
-            }
-
-            return orderBy != null ? orderBy(query) : query;
+           return _dbSet.Where(expression).AsNoTracking();
         }
 
         public virtual async Task<TEntity> FindByIdAsync(object id)

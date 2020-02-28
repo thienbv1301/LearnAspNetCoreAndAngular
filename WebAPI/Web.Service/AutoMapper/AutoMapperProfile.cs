@@ -10,6 +10,7 @@ namespace Web.Service.AutoMapper
         {
             CreateMap<User, UserDto>()    
                 .ForMember(d=>d.Role,m=>m.MapFrom(s=>s.Role.Name));
+            CreateMap<UserRegisterModel, User>();
         }
     }
 }

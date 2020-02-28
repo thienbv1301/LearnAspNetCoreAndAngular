@@ -1,5 +1,11 @@
 ﻿using AutoMapper;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using System;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using Web.Common.AppSettingModels;
 using Web.Common.ExceptionModels;
 using Web.Data.EntityModels;
 using Web.Repository.UnitOfWork;
@@ -12,11 +18,12 @@ namespace Web.Service.UserServices
     {
         private readonly IMapper _mapper;
         private IUnitOfWork _unitOfWork;
+        private readonly AppSettings _appSettings;
 
-        public UserService(IMapper mapper, IUnitOfWork unitOfWork)
+        public UserService(IMapper mapper, IUnitOfWork unitOfWork, IOptions<AppSettings> appSettings)
         {
             _mapper = mapper;
-
+            _appSettings = appSettings.Value;
             _unitOfWork = unitOfWork;
         }
         public UserDto GetUserByName(string name)
@@ -32,13 +39,11 @@ namespace Web.Service.UserServices
 
         public void Register(UserRegisterModel newUserInfo)
         {
-            User newUser = new User();
+            User newUser = _mapper.Map<User>(newUserInfo);
+            newUser.RoleId = 1;
             CreatePasswordHash(newUserInfo.Password, out byte[] passwordHash, out byte[] passwordSalt);
-            newUser.Account = newUserInfo.Account;
             newUser.PasswordHash = passwordHash;
             newUser.PasswordSalt = passwordSalt;
-            newUser.Name = newUserInfo.Name;
-            newUser.RoleId = 1;          
             try
             {
                 _unitOfWork.UserRepository.Add(newUser);
@@ -64,6 +69,51 @@ namespace Web.Service.UserServices
             if(user== null)
             {
                 return false;
+            }
+            return true;
+        }
+
+        public User Authenticate(UserLoginModel userLogin)
+        {
+            User user = _unitOfWork.UserRepository.GetUserByAccount(userLogin.Account.Trim());
+            if(!VerifyPassword(userLogin.Password, user.PasswordHash, user.PasswordSalt))
+            {
+                return null;
+            }
+            return user;
+        }
+
+        public string CreateToken(User user)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new Claim[]
+                {
+                    new Claim(ClaimTypes.Name, user.Name),
+                    new Claim(ClaimTypes.Role,user.Role.Name)
+
+                }),
+                Expires = DateTime.UtcNow.AddMinutes(3),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            };
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            var tokenString = tokenHandler.WriteToken(token);
+            return tokenString;
+        }
+        private bool VerifyPassword(string password, byte[] storedHash, byte[] storedSalt)
+        {          
+            using (var hmac = new System.Security.Cryptography.HMACSHA512(storedSalt))
+            {
+                var computedHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
+                for (int i = 0; i < computedHash.Length; i++)
+                {
+                    if (computedHash[i] != storedHash[i])
+                    {
+                        return false;
+                    }
+                }
             }
             return true;
         }

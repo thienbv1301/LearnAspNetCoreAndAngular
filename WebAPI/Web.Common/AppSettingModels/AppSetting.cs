@@ -1,4 +1,4 @@
-﻿namespace WebAPI.Models
+﻿namespace Web.Common.AppSettingModels
 {
     public class AppSettings
     {

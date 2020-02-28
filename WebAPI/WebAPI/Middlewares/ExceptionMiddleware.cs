@@ -1,11 +1,9 @@
-﻿using Microsoft.AspNetCore.Diagnostics;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using System;
 using System.Net;
 using System.Threading.Tasks;
 using Web.Common.ExceptionModels;
 using Web.LoggerService;
-using Web.Service.DtoModels;
 using WebAPI.Models;
 
 namespace WebAPI.Middlewares

@@ -3,10 +3,11 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.OpenApi.Models;
 using NLog;
+using Swashbuckle.AspNetCore.SwaggerUI;
 using System;
 using System.IO;
+using Web.Common.AppSettingModels;
 using WebAPI.Extentions;
 
 namespace WebAPI
@@ -29,12 +30,10 @@ namespace WebAPI
             services.RegisterUnitOfWork();
             services.RegisterLoggerService();
             services.ConfigureAutoMapper();
-            services.ConfigureJWT(Configuration);           
-            services.AddControllers();       
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
-            });
+            services.ConfigureJWT(Configuration);
+            services.AddControllers();
+            services.Configure<AppSettings>(Configuration);
+            services.ConfigureSwagger();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -59,6 +58,7 @@ namespace WebAPI
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+                c.DocExpansion(DocExpansion.None);
             });
         }
     }

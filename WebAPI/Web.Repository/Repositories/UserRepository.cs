@@ -13,7 +13,7 @@ namespace Web.Repository.Repositories
 
         public User GetUserByAccount(string accName)
         {
-            return _context.Users.FirstOrDefault(u => u.Account.Trim().ToUpper() == accName.Trim().ToUpper());
+            return _context.Users.Include(u=>u.Role).FirstOrDefault(u => u.Account.Trim().ToUpper() == accName.Trim().ToUpper());
         }
 
         public User GetUserByName(string name)

@@ -29,7 +29,12 @@ namespace WebAPI.Controllers
                 return BadRequest();
             }
             _logger.LogInfo($"Get user with name '{name}' from the storage ");
-            return Ok(_userService.GetUserByName(name));
+            UserDto user = _userService.GetUserByName(name);
+            if(user == null)
+            {
+                return NotFound($"User {name} does not exist");
+            }
+            return Ok(user);
         }
 
         [AllowAnonymous]
@@ -38,9 +43,11 @@ namespace WebAPI.Controllers
         {
             if (_userService.AccountIsExist(user.Account))
             {
+                _logger.LogInfo($"Register user {user.Name} failed. Account name is exist ");
                 return BadRequest("Account is exist");
             }
             _userService.Register(user);
+            _logger.LogInfo($"Register user {user.Name} successfully ");
             return Ok();         
         }
 
@@ -50,14 +57,17 @@ namespace WebAPI.Controllers
         {
             if (!_userService.AccountIsExist(userLogin.Account))
             {
+                _logger.LogInfo($"Login failed. Account {userLogin.Account} does not exist ");
                 return BadRequest("Account does not exist");
             }
             User user = _userService.Authenticate(userLogin);
             if (user==null)
             {
+                _logger.LogInfo($"Login failed. Account {userLogin.Account} incorrect password ");
                 return BadRequest("Password is incorrect");
             }
             string token = _userService.CreateToken(user);
+            _logger.LogInfo($"Login succcesfully. Account {userLogin.Account} ");
             return Ok(token);
         }
     }

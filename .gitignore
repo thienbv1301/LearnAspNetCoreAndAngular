@@ -17,3 +17,5 @@ WebAPI/Web.LoggerService/bin/
 WebAPI/Web.LoggerService/obj/
 WebAPI/WebAPI/logs/
 WebAPI/WebAPI/internal_logs/
+WebAPI/Web.Test/bin/
+WebAPI/Web.Test/obj/

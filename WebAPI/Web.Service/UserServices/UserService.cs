@@ -32,7 +32,7 @@ namespace Web.Service.UserServices
             //IQueryable<User> users = _unitOfWork.UserRepository.Find(s => s.Name == name);
             if(user == null)
             {
-                throw new NotFoundException($"User {name} does not exist.");             
+                return null;        
             }
             return _mapper.Map<UserDto>(user);
         }
